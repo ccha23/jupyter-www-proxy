@@ -1,0 +1,35 @@
+{% set data = load_setup_py_data() %}
+{% set name = data.get('name') %}
+{% set version = data.get('version') %}
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+
+source:
+  path: .
+
+build:
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+  noarch: python
+
+requirements:
+  host:
+    - pip
+    - python
+  run:
+    - python
+    {% for dep in data['install_requires'] %}
+    - {{ dep.lower() }}
+    {% endfor %}
+
+test:
+  imports:
+    - jupyter_www_proxy
+
+about:
+  home: https://github.com/ccha23/jupyter-www-proxy
+  license: MIT
+  license_family: MIT
+  summary: "HTTP server for Jupyter."
